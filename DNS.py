@@ -253,10 +253,18 @@ if __name__ == '__main__':
             remaining_ttl, cached_rdata = my_cache.get(domain, q_class, q_type)
             answer_type = q_type
 
-            if cached_rdata is None and q_type != 5:
-                remaining_ttl, cached_rdata = my_cache.get(domain, q_class, 5)
-                if cached_rdata is not None:
-                    answer_type = 5
+            #БЛОК ДЛЯ ПРОВЕРКИ ПО CNAME
+            if cached_rdata is None and q_type != 5: # 5 это CNAME
+                cname_ttl, cname_data = my_cache.get(domain, q_class, 5)
+                if cname_data is not None:
+                    target_domain = cname_data[0] # из списка
+                    target_ttl, target_data = my_cache.get(target_domain, q_class, q_type)
+                    if target_data is not None:
+                        cached_rdata = target_data
+                        answer_type = q_type
+                        remaining_ttl = min(cname_ttl, target_ttl)
+                    else: # CNAME но не IP
+                        cached_rdata = None
 
             if cached_rdata is not None:
 
