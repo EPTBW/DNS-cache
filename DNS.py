@@ -119,7 +119,7 @@ def forward_parser(data_bytes, cache):
     grouped_rdata = {}
     ttl_info = {}
     class_info = {}
-
+    # проходимся по ответам
     for _ in range(an):
         _, offset = read_name(data_bytes, offset)
         resource_record = struct.unpack('>HHIH', data_bytes[offset: offset + 10])
@@ -137,7 +137,7 @@ def forward_parser(data_bytes, cache):
             pref = struct.unpack('>H', data_bytes[offset:offset + 2])[0]
             target_domain, _ = read_name(data_bytes, offset + 2)
             rdata = {'pref': pref, 'domain': target_domain}
-        else:
+        else: # если ip txt берем как есть
             rdata = data_bytes[offset: offset + a_rdata_length]
 
         offset += a_rdata_length
@@ -172,7 +172,7 @@ def response_packet(original_request, question_length, a_type, a_class, remainin
 
     answer_section = b''
 
-    # Теперь мы пакуем каждый ответ из списка в цикле
+    # собираем каждый ответ из списка в цикле
     for item in rdata_list:
         if a_type in [2, 5, 12]:  # NS CNAME PTR
             encoded_rdata = encode_name(item)
