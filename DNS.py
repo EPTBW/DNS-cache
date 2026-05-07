@@ -262,7 +262,7 @@ if __name__ == '__main__':
 
                 print(f"{client_ip}, {type_name}, {domain}, cache")
 
-                response_data = response_packet(client_data, question_length, q_type, q_class, remaining_ttl,
+                response_data = response_packet(client_data, question_length, answer_type, q_class, remaining_ttl,
                                                 cached_rdata)
                 server_socket.sendto(response_data, client_address)
 
